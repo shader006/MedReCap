@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nuist AI Summary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="page-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">N</div>
+        <div>
+          <div class="brand-title">Nuist AI Summary</div>
+          <div class="brand-subtitle">Pipeline dashboard for final summaries</div>
+        </div>
+      </div>
+
+      <section class="panel panel-accent">
+        <div class="panel-label">Input</div>
+        <h2 class="panel-title">Chọn tài liệu để chạy pipeline</h2>
+        <p class="panel-note">Bạn có thể chọn nhiều file hoặc cả folder. Hệ thống sẽ gom tài liệu, chạy pipeline tóm tắt và hiển thị bản tổng hợp cuối cùng.</p>
+
+        <button class="primary-btn" id="summaryPickerBtn" type="button">Thêm nguồn dữ liệu</button>
+
+        <div class="picker-menu" id="pickerMenu" hidden>
+          <button class="picker-option" id="pickFileBtn" type="button">Chọn file</button>
+          <button class="picker-option" id="pickFolderBtn" type="button">Chọn folder</button>
+        </div>
+
+        <div class="action-row">
+          <button class="ghost-btn" id="runBtn" type="button" disabled>Chạy pipeline</button>
+          <button class="ghost-btn ghost-btn-muted" id="clearBtn" type="button" disabled>Xóa chọn</button>
+        </div>
+
+        <div class="pill-row">
+          <span class="pill" id="selectionCountPill">0 tài liệu</span>
+          <span class="pill pill-soft" id="selectionSizePill">0 B</span>
+        </div>
+
+        <input id="fileInput" type="file" multiple hidden />
+        <input id="folderInput" type="file" webkitdirectory directory multiple hidden />
+      </section>
+
+      <section class="panel">
+        <div class="panel-label">System</div>
+        <div class="status-row">
+          <span class="status-dot" id="statusDot"></span>
+          <div>
+            <div class="status-text" id="statusText">Đang kết nối backend...</div>
+            <div class="status-meta" id="modelStatus">Đang kiểm tra model...</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-label">Selected Input</div>
+        <div class="selection-empty" id="selectionEmpty">Chưa có tài liệu nào được chọn.</div>
+        <div class="selection-list" id="selectionList" hidden></div>
+      </section>
+
+      <section class="panel" id="gpuSection" hidden>
+        <div class="panel-label">GPU</div>
+        <div class="gpu-name" id="gpuName">-</div>
+
+        <div class="gpu-row">
+          <span>Compute</span>
+          <span id="gpuUtil">-%</span>
+        </div>
+        <div class="gpu-bar-wrap">
+          <div class="gpu-bar" id="gpuUtilBar"></div>
+        </div>
+
+        <div class="gpu-row">
+          <span>VRAM</span>
+          <span id="gpuMem">-</span>
+        </div>
+        <div class="gpu-bar-wrap">
+          <div class="gpu-bar gpu-bar-alt" id="gpuMemBar"></div>
+        </div>
+
+        <div class="gpu-row temp-row" id="gpuTempRow">
+          <span>Temp</span>
+          <span id="gpuTemp">- C</span>
+        </div>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <header class="workspace-header">
+        <div>
+          <div class="eyebrow">Final Summary Workspace</div>
+          <h1>Dashboard</h1>
+        </div>
+
+        <div class="header-actions">
+          <button class="ghost-btn theme-toggle" id="themeToggleBtn" type="button" aria-pressed="false">Dark mode</button>
+          <button class="ghost-btn" id="copyBtn" type="button" disabled>Copy summary</button>
+          <button class="ghost-btn" id="downloadBtn" type="button" disabled>Tải Markdown</button>
+        </div>
+      </header>
+
+      <section class="overview-grid">
+        <article class="metric-card">
+          <div class="metric-label">Run folder</div>
+          <div class="metric-value" id="runDirValue">-</div>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-label">Final summary file</div>
+          <div class="metric-value" id="finalSummaryPath">-</div>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-label">Documents</div>
+          <div class="metric-value" id="documentsValue">0</div>
+        </article>
+
+        <article class="metric-card">
+          <div class="metric-label">Clusters</div>
+          <div class="metric-value" id="clustersValue">0</div>
+        </article>
+      </section>
+
+      <section class="workspace-grid">
+        <section class="summary-card">
+          <div class="card-head">
+            <div>
+              <div class="panel-label">Pipeline</div>
+              <h2 class="card-title">Tiến trình xử lý</h2>
+            </div>
+            <div class="run-badge" id="runBadge">Idle</div>
+          </div>
+
+          <div class="stage-list" id="stageList"></div>
+        </section>
+
+        <section class="summary-card">
+          <div class="card-head">
+            <div>
+              <div class="panel-label">Artifacts</div>
+              <h2 class="card-title">Đầu ra của pipeline</h2>
+            </div>
+          </div>
+
+          <div class="artifact-list" id="artifactList">
+            <div class="artifact-empty">Chưa có artifact nào.</div>
+          </div>
+        </section>
+      </section>
+
+      <section class="content-grid">
+        <section class="summary-card summary-card-main">
+          <div class="card-head">
+            <div>
+              <div class="panel-label">Final Summary</div>
+              <h2 class="card-title">Bản tóm tắt cuối cùng</h2>
+            </div>
+          </div>
+
+          <div class="summary-output" id="summaryOutput">
+            <div class="summary-empty">Chọn file hoặc folder, sau đó nhấn <strong>Chạy pipeline</strong> để bắt đầu.</div>
+          </div>
+        </section>
+
+        <section class="summary-card">
+          <div class="card-head">
+            <div>
+              <div class="panel-label">Topic Clusters</div>
+              <h2 class="card-title">Cụm chủ đề</h2>
+            </div>
+          </div>
+
+          <div class="cluster-list" id="clusterList">
+            <div class="cluster-empty">Khi pipeline hoàn tất, các cụm nội dung sẽ xuất hiện ở đây.</div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
