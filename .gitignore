@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+backend/.env
+backend/__pycache__/
+backend/outputs/
+.vscode/
+data/
+models/
+test/
+*.jsonl

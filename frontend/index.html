@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nuist AI Summary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="page-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">N</div>
+        <div>
+          <div class="brand-title">Nuist AI Summary</div>
+          <div class="brand-subtitle">Final summary viewer</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-label">Run</div>
+        <button class="primary-btn" id="summaryPickerBtn" type="button">Nuist AI Summary</button>
+        <div class="picker-menu" id="pickerMenu" hidden>
+          <button class="picker-option" id="pickFileBtn" type="button">Chọn file</button>
+          <button class="picker-option" id="pickFolderBtn" type="button">Chọn folder</button>
+        </div>
+        <p class="panel-note">Sau khi chọn file hoặc folder, hệ thống sẽ tự động chạy pipeline và hiển thị nội dung của `final summary`.</p>
+        <input id="fileInput" type="file" multiple hidden />
+        <input id="folderInput" type="file" webkitdirectory directory multiple hidden />
+      </div>
+
+      <div class="panel">
+        <div class="panel-label">Status</div>
+        <div class="status-row">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">Đang kết nối backend...</span>
+        </div>
+        <div class="status-meta" id="modelStatus">Kiểm tra model...</div>
+      </div>
+
+      <div class="panel" id="selectionPanel">
+        <div class="panel-label">Selected Input</div>
+        <div class="selection-empty" id="selectionEmpty">Chưa có file nào được chọn.</div>
+        <div class="selection-list" id="selectionList" hidden></div>
+      </div>
+
+      <div class="panel" id="gpuSection" hidden>
+        <div class="panel-label">GPU</div>
+        <div class="gpu-name" id="gpuName">-</div>
+        <div class="gpu-row">
+          <span>Compute</span>
+          <span id="gpuUtil">-%</span>
+        </div>
+        <div class="gpu-bar-wrap">
+          <div class="gpu-bar" id="gpuUtilBar"></div>
+        </div>
+        <div class="gpu-row">
+          <span>VRAM</span>
+          <span id="gpuMem">-</span>
+        </div>
+        <div class="gpu-bar-wrap">
+          <div class="gpu-bar gpu-bar-alt" id="gpuMemBar"></div>
+        </div>
+        <div class="gpu-row">
+          <span>Temp</span>
+          <span id="gpuTemp">- C</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="workspace-header">
+        <div>
+          <h1>Final Summary</h1>
+          <p class="workspace-subtitle">Chỉ hiển thị nội dung output cuối cùng từ pipeline summary.</p>
+        </div>
+        <div class="header-actions">
+          <button class="ghost-btn" id="downloadBtn" type="button" disabled>Tải .md</button>
+        </div>
+      </header>
+
+      <section class="summary-card">
+        <div class="summary-meta">
+          <div class="meta-item">
+            <span class="meta-label">Run folder</span>
+            <span class="meta-value" id="runDirValue">-</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Final summary file</span>
+            <span class="meta-value" id="finalSummaryPath">-</span>
+          </div>
+        </div>
+
+        <div class="summary-output" id="summaryOutput">
+          <div class="summary-empty">
+            Chọn file hoặc folder để chạy `Nuist AI Summary`.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

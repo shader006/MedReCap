@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+llama-cpp-python
+huggingface_hub
+python-dotenv
+docling
+httpx
+numpy
+torch
+transformers
+sentence-transformers
+umap-learn
+fast-plscan
+markdowncleaner
